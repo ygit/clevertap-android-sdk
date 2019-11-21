@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.util.DisplayMetrics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -73,7 +74,7 @@ public final class Utils {
             // First attempt to check for WiFi connectivity
             ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
             if (connManager == null) {
-                return  "Unavailable";
+                return "Unavailable";
             }
             @SuppressLint("MissingPermission") NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
@@ -84,7 +85,7 @@ public final class Utils {
             // Fall back to network type
             TelephonyManager teleMan = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             if (teleMan == null) {
-                return  "Unavailable";
+                return "Unavailable";
             }
             int networkType = teleMan.getNetworkType();
             switch (networkType) {
@@ -182,27 +183,27 @@ public final class Utils {
         }
     }
 
-    static byte[] getByteArrayFromImageURL(String srcUrl){
+    static byte[] getByteArrayFromImageURL(String srcUrl) {
         srcUrl = srcUrl.replace("///", "/");
         srcUrl = srcUrl.replace("//", "/");
         srcUrl = srcUrl.replace("http:/", "http://");
         srcUrl = srcUrl.replace("https:/", "https://");
         HttpsURLConnection connection = null;
-        try{
+        try {
             URL url = new URL(srcUrl);
             connection = (HttpsURLConnection) url.openConnection();
             InputStream is = connection.getInputStream();
-            byte [] buffer = new byte[8192];
+            byte[] buffer = new byte[8192];
             int bytesRead;
             final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            while((bytesRead = is.read(buffer)) != -1){
-                baos.write(buffer,0,bytesRead);
+            while ((bytesRead = is.read(buffer)) != -1) {
+                baos.write(buffer, 0, bytesRead);
             }
             return baos.toByteArray();
-        }catch (IOException e){
-            Logger.v("Error processing image bytes from url: "+ srcUrl);
+        } catch (IOException e) {
+            Logger.v("Error processing image bytes from url: " + srcUrl);
             return null;
-        }finally {
+        } finally {
             try {
                 if (connection != null) {
                     connection.disconnect();
@@ -213,9 +214,9 @@ public final class Utils {
         }
     }
 
-    static int getThumbnailImage(Context context, String image){
+    static int getThumbnailImage(Context context, String image) {
         if (context != null) {
-            return context.getResources().getIdentifier(image,"drawable",context.getPackageName());
+            return context.getResources().getIdentifier(image, "drawable", context.getPackageName());
         } else {
             return -1;
         }
@@ -230,10 +231,10 @@ public final class Utils {
         return null;
     }
 
-    static ArrayList<String> convertJSONArrayToArrayList(JSONArray array){
+    static ArrayList<String> convertJSONArrayToArrayList(JSONArray array) {
         ArrayList<String> listdata = new ArrayList<>();
         if (array != null) {
-            for (int i = 0; i< array.length(); i++){
+            for (int i = 0; i < array.length(); i++) {
                 try {
                     listdata.add(array.getString(i));
                 } catch (JSONException e) {
@@ -244,23 +245,35 @@ public final class Utils {
         return listdata;
     }
 
-    static boolean validateCTID(String cleverTapID){
-        if(cleverTapID == null){
+    static boolean validateCTID(String cleverTapID) {
+        if (cleverTapID == null) {
             Logger.i("CLEVERTAP_USE_CUSTOM_ID has been set as 1 in AndroidManifest.xml but custom CleverTap ID passed is NULL.");
             return false;
         }
-        if(cleverTapID.isEmpty()){
+        if (cleverTapID.isEmpty()) {
             Logger.i("CLEVERTAP_USE_CUSTOM_ID has been set as 1 in AndroidManifest.xml but custom CleverTap ID passed is empty.");
             return false;
         }
-        if(cleverTapID.length() > 64){
+        if (cleverTapID.length() > 64) {
             Logger.i("Custom CleverTap ID passed is greater than 64 characters. ");
             return false;
         }
-        if(!cleverTapID.matches("[A-Za-z0-9()!:$@_-]*")){
+        if (!cleverTapID.matches("[A-Za-z0-9()!:$@_-]*")) {
             Logger.i("Custom CleverTap ID cannot contain special characters apart from :,(,),_,!,@,$ and - ");
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param context
+     * @param dp      - value of dp
+     * @return corresponding pixel value
+     */
+    public static float toPixel(Context context, float dp) {
+        if (context != null) {
+            return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+        }
+        return 0f;
     }
 }

@@ -1,6 +1,7 @@
 # CleverTap Android SDK
 
 [![codebeat badge](https://codebeat.co/badges/dc032268-36c5-46bd-adbe-afbd619a5657)](https://codebeat.co/projects/github-com-ygit-clevertap-android-sdk-master)
+[![Build Status](https://app.bitrise.io/app/20e7b011d3f3e614/status.svg?token=Z7UxOgKR8-j8--mLXJfyFA)](https://app.bitrise.io/app/20e7b011d3f3e614)
 
 The CleverTap Android SDK for Mobile Customer Engagement and Analytics solutions 
 
